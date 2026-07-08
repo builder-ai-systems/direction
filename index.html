@@ -309,7 +309,7 @@
 
     <div class="status">
       <div class="status-label">big picture:</div>
-      <div class="status-title" id="current-stage-title">BUILDING V1 DIRTY</div>
+      <div class="status-title" id="big-picture-title"></div>
     </div>
   </header>
 
@@ -318,14 +318,14 @@
   <footer>UPDATED MANUALLY · STAY DIRTY, SHIP OFTEN</footer>
 
 <script type="module">
-  import { currentStageIndex, roadmapStages } from "./script.js";
+  import { bigPicture, currentStageIndex, roadmapStages } from "./script.js";
 
   const roadmap = document.querySelector("#roadmap");
-  const currentStageTitle = document.querySelector("#current-stage-title");
+  const currentStageTitle = document.querySelector("#big-picture-title");
   const activeStageIndex = Math.min(Math.max(currentStageIndex, 0), roadmapStages.length - 1);
   const completedStageCount = activeStageIndex;
 
-  currentStageTitle.textContent = roadmapStages[activeStageIndex].title.toUpperCase();
+  currentStageTitle.textContent = bigPicture;
 
   const renderStage = (stage, index, state) => {
     const stageEl = document.createElement("div");
