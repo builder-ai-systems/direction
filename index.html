@@ -10,6 +10,7 @@
     --bg-panel:#0c100e;
     --line:#1b241f;
     --green:#39ff8a;
+    --green-complete:#86f7b4;
     --green-dim:#1c7a45;
     --green-glow:rgba(57,255,138,0.35);
     --text:#e6f2ea;
@@ -84,44 +85,25 @@
     letter-spacing:0.3px;
   }
 
-  /* ---------- STATUS BAR ---------- */
+  /* ---------- STATUS ---------- */
   .status{
     margin:22px auto 0;
     max-width:340px;
-    background:var(--bg-panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:12px 14px;
-    text-align:left;
+    text-align:center;
   }
 
-  .status-row{
-    display:flex;
-    justify-content:space-between;
-    font-size:11px;
+  .status-label{
+    font-size:12px;
     color:var(--text-dim);
-    letter-spacing:0.5px;
+    letter-spacing:0.3px;
   }
 
-  .status-row b{
+  .status-title{
+    margin-top:6px;
+    font-size:14px;
     color:var(--green);
     font-weight:600;
-  }
-
-  .bar-track{
-    margin-top:8px;
-    height:6px;
-    background:#111614;
-    border-radius:4px;
-    overflow:hidden;
-    border:1px solid var(--line);
-  }
-
-  .bar-fill{
-    height:100%;
-    width:38%;
-    background:linear-gradient(90deg,var(--green-dim),var(--green));
-    box-shadow:0 0 10px var(--green-glow);
+    letter-spacing:0.5px;
   }
 
   /* ---------- ROADMAP ---------- */
@@ -162,9 +144,10 @@
     border:2px solid var(--line);
   }
 
-  .stage.done .node{
-    border-color:var(--green-dim);
-    background:var(--green-dim);
+  .stage.completed .node{
+    border-color:var(--green-complete);
+    background:var(--green-complete);
+    box-shadow:0 0 10px rgba(134,247,180,0.22);
   }
 
   .stage.current .node{
@@ -186,7 +169,7 @@
     color:var(--text-dim);
   }
 
-  .stage.done .stage-label{ color:var(--green-dim); }
+  .stage.completed .stage-label{ color:var(--green-complete); }
   .stage.current .stage-label{ color:var(--green); }
 
   .stage-title{
@@ -199,6 +182,10 @@
   .stage.current .stage-title{
     color:var(--green);
     text-shadow:0 0 12px var(--green-glow);
+  }
+
+  .stage.completed .stage-title{
+    color:var(--green-complete);
   }
 
   .stage-desc{
@@ -264,77 +251,69 @@
     <div class="subhead">tracking the climb, one shipped thing at a time</div>
 
     <div class="status">
-      <div class="status-row"><span>CURRENT STAGE</span><b>BUILDING V1 DIRTY</b></div>
-      <div class="bar-track"><div class="bar-fill"></div></div>
-      <div class="status-row" style="margin-top:6px;"><span>PROGRESS</span><b>03 / 08</b></div>
+      <div class="status-label">big picture:</div>
+      <div class="status-title" id="current-stage-title">BUILDING V1 DIRTY</div>
     </div>
   </header>
 
-  <div class="roadmap">
-
-    <div class="stage done">
-      <div class="node"></div>
-      <div class="stage-label">Stage 01</div>
-      <div class="stage-title">Fundamentals</div>
-      <div class="stage-desc">DSA, git, CLI fluency, one language deeply.</div>
-    </div>
-
-    <div class="stage done">
-      <div class="node"></div>
-      <div class="stage-label">Stage 02</div>
-      <div class="stage-title">First Real Projects</div>
-      <div class="stage-desc">Small tools shipped end-to-end, no tutorials.</div>
-    </div>
-
-    <div class="stage current">
-      <div class="node"></div>
-      <div class="stage-label">Stage 03 — Now</div>
-      <div class="stage-title">Building V1 Dirty</div>
-      <div class="stage-desc">Ugly code, real users. Speed over polish — get it working first.</div>
-      <div class="you-are-here">
-        <span class="arrow">➤</span>
-        <span class="label">You are here</span>
-      </div>
-    </div>
-
-    <div class="stage upcoming">
-      <div class="node"></div>
-      <div class="stage-label">Stage 04</div>
-      <div class="stage-title">Ship & Get Feedback</div>
-      <div class="stage-desc">Put it in front of real users, collect signal fast.</div>
-    </div>
-
-    <div class="stage upcoming">
-      <div class="node"></div>
-      <div class="stage-label">Stage 05</div>
-      <div class="stage-title">Refactor & Harden</div>
-      <div class="stage-desc">Tests, error handling, clean architecture pass.</div>
-    </div>
-
-    <div class="stage upcoming">
-      <div class="node"></div>
-      <div class="stage-label">Stage 06</div>
-      <div class="stage-title">Scale & Systems Design</div>
-      <div class="stage-desc">Handle load, design for failure, own infra decisions.</div>
-    </div>
-
-    <div class="stage upcoming">
-      <div class="node"></div>
-      <div class="stage-label">Stage 07</div>
-      <div class="stage-title">Deep Specialization</div>
-      <div class="stage-desc">Go deep on one domain until you're the go-to person.</div>
-    </div>
-
-    <div class="stage upcoming">
-      <div class="node"></div>
-      <div class="stage-label">Stage 08</div>
-      <div class="stage-title">Top 5% Engineer</div>
-      <div class="stage-desc">Leverage, judgment, and taste — not just output.</div>
-    </div>
-
-  </div>
+  <div class="roadmap" id="roadmap"></div>
 
   <footer>UPDATED MANUALLY · STAY DIRTY, SHIP OFTEN</footer>
 
+<script type="module">
+  import { currentStageIndex, roadmapStages } from "./script.js";
+
+  const roadmap = document.querySelector("#roadmap");
+  const currentStageTitle = document.querySelector("#current-stage-title");
+  const activeStageIndex = Math.min(Math.max(currentStageIndex, 0), roadmapStages.length - 1);
+
+  currentStageTitle.textContent = roadmapStages[activeStageIndex].title.toUpperCase();
+
+  roadmapStages.forEach((stage, index) => {
+    const state = index < activeStageIndex
+      ? "completed"
+      : index === activeStageIndex
+        ? "current"
+        : "upcoming";
+
+    const stageEl = document.createElement("div");
+    stageEl.className = `stage ${state}`;
+
+    const node = document.createElement("div");
+    node.className = "node";
+
+    const label = document.createElement("div");
+    label.className = "stage-label";
+    label.textContent = `Stage ${index}${state === "current" ? " - Now" : ""}`;
+
+    const title = document.createElement("div");
+    title.className = "stage-title";
+    title.textContent = stage.title;
+
+    const description = document.createElement("div");
+    description.className = "stage-desc";
+    description.textContent = stage.description;
+
+    stageEl.append(node, label, title, description);
+
+    if (state === "current") {
+      const marker = document.createElement("div");
+      marker.className = "you-are-here";
+
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.textContent = ">";
+
+      const markerLabel = document.createElement("span");
+      markerLabel.className = "label";
+      markerLabel.textContent = "You are here";
+
+      marker.append(arrow, markerLabel);
+      stageEl.appendChild(marker);
+    }
+
+    roadmap.appendChild(stageEl);
+  });
+</script>
 </body>
 </html>
