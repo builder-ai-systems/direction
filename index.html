@@ -321,11 +321,13 @@
   import { bigPicture, currentStageIndex, roadmapStages } from "./script.js";
 
   const roadmap = document.querySelector("#roadmap");
-  const currentStageTitle = document.querySelector("#big-picture-title");
+  const bigPictureTitle = document.querySelector("#big-picture-title");
   const activeStageIndex = Math.min(Math.max(currentStageIndex, 0), roadmapStages.length - 1);
   const completedStageCount = activeStageIndex;
 
-  currentStageTitle.textContent = bigPicture;
+  if (bigPictureTitle) {
+    bigPictureTitle.textContent = bigPicture;
+  }
 
   const renderStage = (stage, index, state) => {
     const stageEl = document.createElement("div");
