@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Direction</title>
+<title>Top 5% // Roadmap</title>
 <style>
   :root{
     --bg:#050706;
@@ -133,6 +133,63 @@
     padding-bottom:0;
   }
 
+  .completed-toggle{
+    position:relative;
+    width:calc(100% - 22px);
+    margin:0 0 26px 22px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--green-complete);
+    font:inherit;
+    text-align:left;
+    cursor:pointer;
+  }
+
+  .completed-toggle::before{
+    content:"";
+    position:absolute;
+    left:-26px;
+    top:2px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--green-complete);
+    border:2px solid var(--green-complete);
+    box-shadow:0 0 10px rgba(134,247,180,0.22);
+  }
+
+  .completed-toggle-label{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+
+  .completed-toggle-arrow{
+    display:inline-block;
+    font-size:12px;
+    transition:transform 160ms ease;
+  }
+
+  .completed-toggle[aria-expanded="true"] .completed-toggle-arrow{
+    transform:rotate(90deg);
+  }
+
+  .completed-stages{
+    display:none;
+  }
+
+  .completed-stages.open{
+    display:block;
+  }
+
+  .completed-stages .stage:last-child{
+    padding-bottom:34px;
+  }
+
   .node{
     position:absolute;
     left:-26px;
@@ -252,7 +309,7 @@
 
     <div class="status">
       <div class="status-label">big picture:</div>
-      <div class="status-title"  id="current-stage-title">BUILDING V1 DIRTY</div>
+      <div class="status-title" id="current-stage-title">BUILDING V1 DIRTY</div>
     </div>
   </header>
 
@@ -266,16 +323,11 @@
   const roadmap = document.querySelector("#roadmap");
   const currentStageTitle = document.querySelector("#current-stage-title");
   const activeStageIndex = Math.min(Math.max(currentStageIndex, 0), roadmapStages.length - 1);
+  const completedStageCount = activeStageIndex;
 
   currentStageTitle.textContent = roadmapStages[activeStageIndex].title.toUpperCase();
 
-  roadmapStages.forEach((stage, index) => {
-    const state = index < activeStageIndex
-      ? "completed"
-      : index === activeStageIndex
-        ? "current"
-        : "upcoming";
-
+  const renderStage = (stage, index, state) => {
     const stageEl = document.createElement("div");
     stageEl.className = `stage ${state}`;
 
@@ -312,7 +364,52 @@
       stageEl.appendChild(marker);
     }
 
-    roadmap.appendChild(stageEl);
+    return stageEl;
+  };
+
+  if (completedStageCount > 0) {
+    const completedToggle = document.createElement("button");
+    completedToggle.className = "completed-toggle";
+    completedToggle.type = "button";
+    completedToggle.setAttribute("aria-expanded", "false");
+
+    const toggleLabel = document.createElement("span");
+    toggleLabel.className = "completed-toggle-label";
+
+    const toggleArrow = document.createElement("span");
+    toggleArrow.className = "completed-toggle-arrow";
+    toggleArrow.textContent = ">";
+
+    const toggleText = document.createElement("span");
+    toggleText.textContent = `Completed steps (${completedStageCount})`;
+
+    toggleLabel.append(toggleArrow, toggleText);
+    completedToggle.appendChild(toggleLabel);
+
+    const completedStages = document.createElement("div");
+    completedStages.className = "completed-stages";
+
+    roadmapStages.slice(0, activeStageIndex).forEach((stage, index) => {
+      completedStages.appendChild(renderStage(stage, index, "completed"));
+    });
+
+    completedToggle.addEventListener("click", () => {
+      const isOpen = completedToggle.getAttribute("aria-expanded") === "true";
+      completedToggle.setAttribute("aria-expanded", String(!isOpen));
+      completedStages.classList.toggle("open", !isOpen);
+    });
+
+    roadmap.append(completedToggle, completedStages);
+  }
+
+  roadmapStages.forEach((stage, index) => {
+    if (index < activeStageIndex) return;
+
+    const state = index === activeStageIndex
+        ? "current"
+        : "upcoming";
+
+    roadmap.appendChild(renderStage(stage, index, state));
   });
 </script>
 </body>
