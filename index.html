@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Top 5% // Roadmap</title>
+<style>
+  :root{
+    --bg:#050706;
+    --bg-panel:#0c100e;
+    --line:#1b241f;
+    --green:#39ff8a;
+    --green-complete:#86f7b4;
+    --green-dim:#1c7a45;
+    --green-glow:rgba(57,255,138,0.35);
+    --text:#e6f2ea;
+    --text-dim:#7c8f84;
+    --font-mono:'JetBrains Mono','Fira Code',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-mono);
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior-y:none;
+  }
+
+  body{
+    min-height:100vh;
+    padding:28px 18px 60px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(57,255,138,0.06), transparent 55%),
+      var(--bg);
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    text-align:center;
+    margin-bottom:34px;
+  }
+
+  .prompt{
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--green-dim);
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin-top:10px;
+    font-size:26px;
+    line-height:1.25;
+    letter-spacing:0.5px;
+    color:var(--text);
+    font-weight:700;
+  }
+
+  h1 .pct{
+    color:var(--green);
+    text-shadow:0 0 18px var(--green-glow);
+  }
+
+  .cursor{
+    display:inline-block;
+    width:9px;
+    height:20px;
+    background:var(--green);
+    margin-left:4px;
+    vertical-align:-3px;
+    animation:blink 1s steps(1) infinite;
+    box-shadow:0 0 10px var(--green-glow);
+  }
+
+  @keyframes blink{
+    50%{opacity:0;}
+  }
+
+  .subhead{
+    margin-top:12px;
+    font-size:12px;
+    color:var(--text-dim);
+    letter-spacing:0.3px;
+  }
+
+  /* ---------- STATUS ---------- */
+  .status{
+    margin:22px auto 0;
+    max-width:340px;
+    text-align:center;
+  }
+
+  .status-label{
+    font-size:12px;
+    color:var(--text-dim);
+    letter-spacing:0.3px;
+  }
+
+  .status-title{
+    margin-top:6px;
+    font-size:14px;
+    color:var(--green);
+    font-weight:600;
+    letter-spacing:0.5px;
+  }
+
+  /* ---------- ROADMAP ---------- */
+  .roadmap{
+    position:relative;
+    max-width:420px;
+    margin:44px auto 0;
+    padding-left:26px;
+  }
+
+  .roadmap::before{
+    content:"";
+    position:absolute;
+    left:9px;
+    top:6px;
+    bottom:6px;
+    width:2px;
+    background:linear-gradient(to bottom, var(--green-dim), var(--line) 70%);
+  }
+
+  .stage{
+    position:relative;
+    padding:0 0 34px 22px;
+  }
+
+  .stage:last-child{
+    padding-bottom:0;
+  }
+
+  .node{
+    position:absolute;
+    left:-26px;
+    top:2px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--line);
+  }
+
+  .stage.completed .node{
+    border-color:var(--green-complete);
+    background:var(--green-complete);
+    box-shadow:0 0 10px rgba(134,247,180,0.22);
+  }
+
+  .stage.current .node{
+    border-color:var(--green);
+    background:var(--green);
+    box-shadow:0 0 0 4px var(--green-glow), 0 0 16px var(--green-glow);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 0 4px var(--green-glow), 0 0 14px var(--green-glow); }
+    50%{ box-shadow:0 0 0 7px rgba(57,255,138,0.15), 0 0 22px var(--green-glow); }
+  }
+
+  .stage-label{
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+
+  .stage.completed .stage-label{ color:var(--green-complete); }
+  .stage.current .stage-label{ color:var(--green); }
+
+  .stage-title{
+    margin-top:4px;
+    font-size:15px;
+    font-weight:600;
+    color:var(--text);
+  }
+
+  .stage.current .stage-title{
+    color:var(--green);
+    text-shadow:0 0 12px var(--green-glow);
+  }
+
+  .stage.completed .stage-title{
+    color:var(--green-complete);
+  }
+
+  .stage-desc{
+    margin-top:5px;
+    font-size:12px;
+    line-height:1.5;
+    color:var(--text-dim);
+    max-width:280px;
+  }
+
+  .stage.upcoming .stage-title,
+  .stage.upcoming .stage-desc{
+    opacity:0.45;
+  }
+
+  /* current stage arrow callout */
+  .you-are-here{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:10px;
+    padding:6px 10px 6px 8px;
+    border:1px solid var(--green-dim);
+    border-radius:6px;
+    background:rgba(57,255,138,0.06);
+  }
+
+  .you-are-here .arrow{
+    color:var(--green);
+    font-size:14px;
+    animation:nudge 1.2s ease-in-out infinite;
+  }
+
+  @keyframes nudge{
+    0%,100%{ transform:translateX(0); }
+    50%{ transform:translateX(4px); }
+  }
+
+  .you-are-here span.label{
+    font-size:10px;
+    letter-spacing:1px;
+    color:var(--green);
+    text-transform:uppercase;
+    font-weight:700;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:46px;
+    font-size:10px;
+    letter-spacing:1.5px;
+    color:var(--text-dim);
+    opacity:0.6;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="prompt">~/career/roadmap $ status</div>
+    <h1>PATH TO <span class="pct">TOP 5%</span> ENGINEER<span class="cursor"></span></h1>
+    <div class="subhead">tracking the climb, one shipped thing at a time</div>
+
+    <div class="status">
+      <div class="status-label">big picture:</div>
+      <div class="status-title" id="current-stage-title">BUILDING V1 DIRTY</div>
+    </div>
+  </header>
+
+  <div class="roadmap" id="roadmap"></div>
+
+  <footer>UPDATED MANUALLY · STAY DIRTY, SHIP OFTEN</footer>
+
+<script type="module">
+  import { currentStageIndex, roadmapStages } from "./script.js";
+
+  const roadmap = document.querySelector("#roadmap");
+  const currentStageTitle = document.querySelector("#current-stage-title");
+  const activeStageIndex = Math.min(Math.max(currentStageIndex, 0), roadmapStages.length - 1);
+
+  currentStageTitle.textContent = roadmapStages[activeStageIndex].title.toUpperCase();
+
+  roadmapStages.forEach((stage, index) => {
+    const state = index < activeStageIndex
+      ? "completed"
+      : index === activeStageIndex
+        ? "current"
+        : "upcoming";
+
+    const stageEl = document.createElement("div");
+    stageEl.className = `stage ${state}`;
+
+    const node = document.createElement("div");
+    node.className = "node";
+
+    const label = document.createElement("div");
+    label.className = "stage-label";
+    label.textContent = `Stage ${index}${state === "current" ? " - Now" : ""}`;
+
+    const title = document.createElement("div");
+    title.className = "stage-title";
+    title.textContent = stage.title;
+
+    const description = document.createElement("div");
+    description.className = "stage-desc";
+    description.textContent = stage.description;
+
+    stageEl.append(node, label, title, description);
+
+    if (state === "current") {
+      const marker = document.createElement("div");
+      marker.className = "you-are-here";
+
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.textContent = ">";
+
+      const markerLabel = document.createElement("span");
+      markerLabel.className = "label";
+      markerLabel.textContent = "You are here";
+
+      marker.append(arrow, markerLabel);
+      stageEl.appendChild(marker);
+    }
+
+    roadmap.appendChild(stageEl);
+  });
+</script>
+</body>
+</html>
