@@ -1,4 +1,4 @@
-export const currentStageIndex = 4;
+export const currentStageIndex = 2;
 
 export const roadmapStages = [
   {
